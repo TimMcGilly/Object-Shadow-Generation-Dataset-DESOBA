@@ -13,8 +13,12 @@ from PIL import ImageOps, Image
 import cv2
 import math
 import sys
-sys.path.append('../pytorch_ssim/')
+sys.path.append('/content/drive/MyDrive/Object-Shadow-Generation-Dataset-DESOBA/src/pytorch_ssim/')
 import pytorch_ssim
+from importlib import reload # reload 
+reload(pytorch_ssim)
+import pytorch_ssim.pytorch_ssim
+
 import torch
 from sklearn.metrics import balanced_accuracy_score
 from skimage.measure import compare_mse
@@ -319,7 +323,10 @@ class SGRNetModel(DistangleModel):
             gt_tensor = (getattr(self, 'shadow_img').data[i:i + 1, :, :, :]/2 + 0.5) * 255
             prediction_tensor = (getattr(self, 'final').data[i:i + 1, :, :, :]/2 + 0.5) * 255
             mask_tensor = (getattr(self, 'shadow_mask').data[i:i + 1, :, :, :]/2 + 0.5)
-            SSIM.append(pytorch_ssim.ssim(gt_tensor, prediction_tensor, window_size = 11, size_average = True))
+            
+            #SSIM.append(pytorch_ssim.ssim(gt_tensor, prediction_tensor, window_size = 11, size_average = True))
+            SSIM.append(ssim.ssim(gt_tensor, prediction_tensor,mask=mask_tensor))
+
             shadowSSIM.append(ssim.ssim(gt_tensor, prediction_tensor,mask=mask_tensor))
 
         return RMSE,shadowRMSE, SSIM, shadowSSIM

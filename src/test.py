@@ -14,10 +14,14 @@ import torch
 
 opt = TestOptions().parse()
 data_loader = CreateDataLoader(opt)
+print("Created Data Loader")
 dataset = data_loader.load_data()
+print("loaded data")
 dataset_size = len(data_loader)
 model = create_model(opt)
+print("created model")
 model.setup(opt)
+print("setup model")
 visualizer = Visualizer(opt)
 
 
@@ -30,6 +34,7 @@ shadowSSIMS = []
 for i, data in enumerate(dataset):
     model.set_input(data)
     model.prediction()
+    print(f"prediction {i} done")
     lenght, visual_dict = model.get_current_visuals()
     visualizer.display_current_results(visual_dict, i)
     RMSE,shadowRMSE, SSIM, shadowSSIM = model.get_current_errors()
