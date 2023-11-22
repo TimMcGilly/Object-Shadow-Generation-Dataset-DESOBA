@@ -1,0 +1,98 @@
+----------------- Options ---------------
+               batch_size: 1                             
+                    beta1: 0.5                           
+         bg_instance_path: None                          
+           bg_shadow_path: None                          
+                      bos: True                          	[default: False]
+                  bosfree: False                         
+          checkpoints_dir: ../../TrainedModels/SGRNet_TrainedModel	[default: ./checkpoints]
+               conditionD: 0.0                           
+           continue_train: False                         
+                 dataroot: ../../../IntrinsicHarmony/results/iih_base_lt_gd_allihd/test_latest/images	[default: None]
+             dataset_mode: iharmoutput                   	[default: aligned]
+                direction: AtoB                          
+              display_env: main                          
+             display_freq: 40                            
+               display_id: -1                            
+            display_ncols: 4                             
+             display_port: 8002                          	[default: 8097]
+           display_server: http://localhost              	[default: http://localhost:8097]
+          display_winsize: 256                           
+                    epoch: latest                        
+              epoch_count: 1                             
+                     eval: True                          	[default: False]
+                 fineSize: 256                           
+               finetuning: False                         
+           finetuning_dir: None                          
+         finetuning_epoch: None                          
+          finetuning_name: None                          
+                  gpu_ids: 0                             
+             illumination: 0.0                           
+                init_gain: 0.02                          
+                init_type: xavier                        
+                 input_nc: 3                             
+            instance_path: None                          
+                  isTrain: False                         	[default: None]
+               keep_ratio: False                         
+               lambda_GAN: 0.1                           	[default: 0.0]
+          lambda_GAN_mask: 0.0                           
+                lambda_I1: 10.0                          	[default: 1]
+                lambda_L1: 0.0                           
+                lambda_M1: 10.0                          	[default: 1]
+                lambda_P1: 1                             
+              lambda_REF1: 1                             
+              lambda_STN1: 1                             
+               lambda_TV1: 1                             
+                lambda_bd: 0.0                           
+            lambda_smooth: 0.0                           
+               light_path: None                          
+           light_vis_path: None                          
+                 loadSize: 256                           	[default: 286]
+                       lr: 0.0002                        
+                     lr_D: 0.0002                        
+           lr_decay_iters: 50                            
+                lr_policy: lambda                        
+                mask_test: None                          
+               mask_train: None                          
+         max_dataset_size: inf                           
+                    model: SGRNet                        	[default: cycle_gan]
+               n_layers_D: 3                             
+                     name: SelfAttention_GRESNEXT18_C32_Dpixel_lrD0.0002	[default: experiment_name]
+                      ndf: 64                            
+                     netD: pixel                         	[default: basic]
+                     netG: RESNEXT18                     	[default: resnet_9blocks]
+            new_mask_path: None                          
+                      ngf: 32                            	[default: 64]
+                    niter: 100                           
+              niter_decay: 100                           
+                  no_crop: True                          	[default: False]
+               no_dropout: True                          	[default: False]
+                  no_flip: True                          	[default: False]
+                  no_html: False                         
+                 no_lsgan: True                          
+                no_rotate: True                          	[default: False]
+                     norm: instance                      	[default: batch]
+                norm_mean: [0.5, 0.5, 0.5]               
+                 norm_std: [0.5, 0.5, 0.5]               
+              num_threads: 4                             
+                output_nc: 3                             
+               param_path: None                          
+                    phase: test                          
+                pool_size: 0                             
+               print_freq: 100                           
+               randomSize: False                         
+              redark_path: None                          
+                 residual: 0.0                           
+           resize_or_crop: resize_and_crop               
+          save_epoch_freq: 5                             
+         save_latest_freq: 5000                          
+           serial_batches: True                          	[default: False]
+          shadowfree_path: None                          
+           shadowimg_path: None                          
+          shadowmask_path: None                          
+                   suffix:                               
+         update_html_freq: 10000                         
+             use_our_mask: False                         
+                  verbose: False                         
+                wdataroot: None                          
+----------------- End -------------------

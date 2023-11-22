@@ -77,6 +77,7 @@ def generate_training_pairs(newwh, shadow_image, deshadowed_image, instance_mask
         object_num += 1
 
     for i in range(1, object_num):
+        print('AAAAA')
         selected_instance_pixel_combine = itertools.combinations(instance_pixels, i)
         if not is_train:
             #####combination
@@ -234,16 +235,16 @@ class IHarmOutputDataset(BaseDataset):
             #imname = imname_list[0] # de-wrap the image name
 
             # adjust file naming so that the 'a' image is ground truth (as output by Iharm)
-            A_img = Image.open(os.path.join(opt.dataroot,image.replace('harmonized', 'real'))).convert('RGB').resize((self.opt.loadSize, self.opt.loadSize),Image.NEAREST)
+            A_img = Image.open(image.replace('harmonized', 'real')).convert('RGB').resize((self.opt.loadSize, self.opt.loadSize),Image.NEAREST)
 
             # 'c' image is the harmonised output of iharmony
-            C_img = Image.open(os.path.join(self.dataroot,image)).convert('RGB').resize((self.opt.loadSize, self.opt.loadSize),Image.NEAREST)
+            C_img = Image.open(image).convert('RGB').resize((self.opt.loadSize, self.opt.loadSize),Image.NEAREST)
 
             # foreground mask
-            new_mask = Image.open(os.path.join(self.dataroot,image.replace('harmonized', 'mask'))).convert('L').resize((self.opt.loadSize, self.opt.loadSize),Image.NEAREST)
+            new_mask = Image.open(image.replace('harmonized', 'mask')).convert('L').resize((self.opt.loadSize, self.opt.loadSize),Image.NEAREST)
 
             # just use the foreground mask again for the instance mask
-            instance = Image.open(os.path.join(self.dataroot,image.replace('harmonized', 'mask'))).convert('L').resize((self.opt.loadSize, self.opt.loadSize),Image.NEAREST)
+            instance = Image.open(image.replace('harmonized', 'mask')).convert('L').resize((self.opt.loadSize, self.opt.loadSize),Image.NEAREST)
             
             # don't have a shadow mask, or params
             # shadow = Image.open(os.path.join(self.dir_bg_shadow,image)).convert('L').resize((self.opt.loadSize, self.opt.loadSize),Image.NEAREST)
@@ -253,7 +254,7 @@ class IHarmOutputDataset(BaseDataset):
             # shadow_param = shadow_param[0:6]
             
             A_img_array = np.array(A_img)
-            C_img_arry = np.array(C_img)
+            C_img_array = np.array(C_img)
             new_mask_array = np.array(new_mask)
             instance_array = np.array(instance)
             # shadow_array = np.array(shadow)
@@ -266,14 +267,24 @@ class IHarmOutputDataset(BaseDataset):
             # not sure we need to do training pair generation if only one masked object
 
             #####selecting random number of objects as foreground objects, while only one object is selected as foreground object
-            self.birdy_deshadoweds, self.birdy_shadoweds,  self.birdy_fg_instances, self.birdy_fg_shadows, \
-            self.birdy_bg_instances,  self.birdy_bg_shadows, self.birdy_edges, self.birdy_shadow_params, self.birdy_shadow_object_ratio, \
-            self.birdy_instance_boxes, self.birdy_shadow_boxes, self.birdy_instance_box_areas, self.birdy_shadow_box_areas, self.birdy_imlists = generate_training_pairs( \
-                self.opt.loadSize, A_img_array, C_img_arry, instance_array, np.array(), new_mask_array, [], [image], self.is_train, \
-                self.birdy_deshadoweds, self.birdy_shadoweds,  self.birdy_fg_instances, self.birdy_fg_shadows, \
-                self.birdy_bg_instances,  self.birdy_bg_shadows, self.birdy_edges, self.birdy_shadow_params, self.birdy_shadow_object_ratio, \
-                self.birdy_instance_boxes, self.birdy_shadow_boxes, self.birdy_instance_box_areas, self.birdy_shadow_box_areas,self.birdy_imlists)
+            # self.birdy_deshadoweds, self.birdy_shadoweds,  self.birdy_fg_instances, self.birdy_fg_shadows, \
+            # self.birdy_bg_instances,  self.birdy_bg_shadows, self.birdy_edges, self.birdy_shadow_params, self.birdy_shadow_object_ratio, \
+            # self.birdy_instance_boxes, self.birdy_shadow_boxes, self.birdy_instance_box_areas, self.birdy_shadow_box_areas, self.birdy_imlists = generate_training_pairs( \
+            #     self.opt.loadSize, A_img_array, C_img_array, instance_array, np.ones(A_img_array.shape), new_mask_array, [1,1,1,1,1,1], [image], self.is_train, \
+            #     self.birdy_deshadoweds, self.birdy_shadoweds,  self.birdy_fg_instances, self.birdy_fg_shadows, \
+            #     self.birdy_bg_instances,  self.birdy_bg_shadows, self.birdy_edges, self.birdy_shadow_params, self.birdy_shadow_object_ratio, \
+            #     self.birdy_instance_boxes, self.birdy_shadow_boxes, self.birdy_instance_box_areas, self.birdy_shadow_box_areas,self.birdy_imlists)
 
+            self.birdy_deshadoweds.append(Image.fromarray(np.uint8(C_img_array), mode='RGB'))
+            self.birdy_shadoweds.append(Image.fromarray(np.uint8(A_img_array), mode='RGB'))
+            self.birdy_fg_instances.append(Image.fromarray(np.uint8(instance_array), mode='L'))
+            self.birdy_fg_shadows.append(Image.fromarray(np.uint8(np.ones(A_img_array.shape)), mode='RGB'))
+            self.birdy_imlists.append(image)
+            self.birdy_bg_instances.append(Image.fromarray(np.uint8(np.zeros(instance_array.shape)), mode='L'))
+            self.birdy_bg_shadows.append(Image.fromarray(np.uint8(np.zeros(instance_array.shape)), mode='L'))
+
+
+        print("Done loading images")
         self.data_size = len(self.birdy_deshadoweds)
         # print('fff', self.is_train)
         print('datasize', self.data_size)
@@ -295,13 +306,13 @@ class IHarmOutputDataset(BaseDataset):
         birdy = {}
         birdy['A'] = self.birdy_shadoweds[index]
         birdy['C'] = self.birdy_deshadoweds[index]
-        birdy['edge'] = self.birdy_edges[index]
+        # birdy['edge'] = self.birdy_edges[index]
         birdy['instancemask'] = self.birdy_fg_instances[index]
         birdy['B'] = self.birdy_fg_shadows[index]
         birdy['bg_shadow'] = self.birdy_bg_shadows[index]
         birdy['bg_instance'] = self.birdy_bg_instances[index]
-        birdy['fg_instance_box_area'] = self.birdy_instance_box_areas[index]
-        birdy['fg_shadow_box_area'] = self.birdy_shadow_box_areas[index]
+        # birdy['fg_instance_box_area'] = self.birdy_instance_box_areas[index]
+        # birdy['fg_shadow_box_area'] = self.birdy_shadow_box_areas[index]
         birdy['im_list']= self.birdy_imlists[index]
 
 
@@ -374,9 +385,9 @@ class IHarmOutputDataset(BaseDataset):
         birdy['h'] = oh
 
         #if the shadow area is too small, let's not change anything:
-        shadow_param = self.birdy_shadow_params[index]
-        if torch.sum(birdy['B']>0) < 30 :
-            shadow_param=[0,1,0,1,0,1]
+        # shadow_param = self.birdy_shadow_params[index]
+        # if torch.sum(birdy['B']>0) < 30 :
+        shadow_param=[0,1,0,1,0,1]
 
         birdy['param'] = torch.FloatTensor(np.array(shadow_param))
 
