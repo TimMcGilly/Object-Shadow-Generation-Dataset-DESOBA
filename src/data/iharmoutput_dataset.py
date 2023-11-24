@@ -21,12 +21,6 @@ class IHarmOutputDataset(BaseDataset):
         self.opt = opt
         self.is_train = self.opt.isTrain
         self.root = opt.dataroot
-        # self.dir_A =  opt.shadowimg_path # not needed
-        # self.dir_C = opt.shadowfree_path 
-        self.dir_param = opt.param_path
-        # self.dir_bg_instance = opt.bg_instance_path # not needed
-        self.dir_bg_shadow = opt.bg_shadow_path
-        self.dir_new_mask = opt.new_mask_path
 
         # get the harmonised images from the dataroot folder
         harmed_images = glob.glob(opt.dataroot+'/*_harmonized.jpg')
@@ -34,7 +28,6 @@ class IHarmOutputDataset(BaseDataset):
         # We only have; harmonised image, foreground mask, ground truth
         # NO; shadow mask, param information
 
-        # print('total images number', len(self.imname))
         self.birdy_deshadoweds = []
         self.birdy_shadoweds = []
         self.birdy_fg_instances = []
@@ -174,7 +167,7 @@ class IHarmOutputDataset(BaseDataset):
 
         # return all the necessary information information for a single image
         return birdy
-    
+
 
     def __len__(self):
         return self.data_size
